@@ -15,16 +15,27 @@ enum EnumDeeplink: String {
 
 extension EnumDeeplink {
     static func getEnum(tag: String) -> EnumDeeplink {
-        switch tag {
-        case "swift":
-            return .swift
+        if tag.contains("coordinatorApp://") {
             
-        case "javascript":
-            return .javascript
+            let link = tag.replacingOccurrences(of: "coordinatorApp://", with: "")
             
-        default:
+            switch link {
+            case "swift":
+                return .swift
+                
+            case "javascript":
+                return .javascript
+                
+            default:
+                return .empty
+            }
+        } else {
             return .empty
         }
+    }
+    
+    static func getTitle(type: EnumDeeplink) -> String {
+        return type.rawValue
     }
 }
 
@@ -38,7 +49,7 @@ class DeepLinkManager {
         
         switch router {
         case .swift, .javascript:
-            coordinator.goToLanguage(language: deepLink)
+            coordinator.goToLanguage(language: EnumDeeplink.getTitle(type: router))
             
         default:
             break
